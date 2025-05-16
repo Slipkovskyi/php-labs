@@ -1,35 +1,35 @@
 services:
   ###> doctrine/doctrine-bundle ###
-  db-symf:
+  db-lara:
     platform: linux/amd64
     image: mysql:5.7
     volumes:
-      - db-symf-data:/var/lib/mysql
+      - db-lara-data:/var/lib/mysql
     restart: always
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: db-symf
+      MYSQL_DATABASE: db-lara
       MYSQL_PASSWORD: password
     networks:
-      - symf-net
+      - lara-net
 
-  phpmyadmin-symf:
+  phpmyadmin-lara:
     depends_on:
-      - db-symf
+      - db-lara
     image: phpmyadmin
     restart: always
     ports:
       - "8090:80"
     environment:
-      PMA_HOST: db-symf
+      PMA_HOST: db-lara
       MYSQL_ROOT_PASSWORD: password
     networks:
-      - symf-net
+      - lara-net
 
 networks:
-  symf-net:
+  lara-net:
 
 volumes:
-  db-symf-data:
+  db-lara-data:

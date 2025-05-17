@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Repositories\CarRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -13,14 +14,31 @@ use Illuminate\Http\Response;
 class CarController extends Controller
 {
     /**
-     * Display a listing of the cars.
-     *
+     * @var CarRepository
+     */
+    private CarRepository $repo;
+
+    /**
+     * @param CarRepository $repo
+     */
+    public function __construct(CarRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
+    /**
+     * @param Request $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $cars = Car::all();
-        return response()->json($cars, Response::HTTP_OK);
+        $filters = $request->only(['model', 'license_plate', 'driver_id']);
+        $perPage = (int) $request->query('itemsPerPage', 10);
+        $page    = (int) $request->query('page', 1);
+
+        $data = $this->repo->getAllByFilter($filters, $perPage, $page);
+
+        return response()->json($data, JsonResponse::HTTP_OK);
     }
 
     /**

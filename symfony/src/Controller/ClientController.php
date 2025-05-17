@@ -39,13 +39,16 @@ class ClientController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
     #[Route('/', name: 'get_clients', methods: ['GET'])]
-    public function getClients(): JsonResponse
+    public function getClients(Request $request): JsonResponse
     {
-        $clients = $this->clientRepository->findAll();
-        $data = array_map(fn(Client $client) => $client->jsonSerialize(), $clients);
+        $requestData = $request->query->all();
+        $itemsPerPage = isset($requestData['itemsPerPage']) ? (int)$requestData['itemsPerPage'] : 10;
+        $page = isset($requestData['page']) ? (int)$requestData['page'] : 1;
+        $data = $this->clientRepository->getAllByFilter($requestData, $itemsPerPage, $page);
 
         return new JsonResponse($data, Response::HTTP_OK);
     }

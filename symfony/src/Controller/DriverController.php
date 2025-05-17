@@ -39,13 +39,16 @@ class DriverController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
     #[Route('/', name: 'get_drivers', methods: ['GET'])]
-    public function getDrivers(): JsonResponse
+    public function getDrivers(Request $request): JsonResponse
     {
-        $drivers = $this->driverRepository->findAll();
-        $data = array_map(fn(Driver $driver) => $driver->jsonSerialize(), $drivers);
+        $requestData = $request->query->all();
+        $itemsPerPage = isset($requestData['itemsPerPage']) ? (int)$requestData['itemsPerPage'] : 10;
+        $page = isset($requestData['page']) ? (int)$requestData['page'] : 1;
+        $data = $this->driverRepository->getAllByFilter($requestData, $itemsPerPage, $page);
 
         return new JsonResponse($data, Response::HTTP_OK);
     }

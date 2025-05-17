@@ -47,13 +47,16 @@ class CarController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
     #[Route('/', name: 'get_cars', methods: ['GET'])]
-    public function getCars(): JsonResponse
+    public function getCars(Request $request): JsonResponse
     {
-        $cars = $this->carRepository->findAll();
-        $data = array_map(fn(Car $car) => $car->jsonSerialize(), $cars);
+        $requestData = $request->query->all();
+        $itemsPerPage = isset($requestData['itemsPerPage']) ? (int)$requestData['itemsPerPage'] : 10;
+        $page = isset($requestData['page']) ? (int)$requestData['page'] : 1;
+        $data = $this->carRepository->getAllByFilter($requestData, $itemsPerPage, $page);
 
         return new JsonResponse($data, Response::HTTP_OK);
     }

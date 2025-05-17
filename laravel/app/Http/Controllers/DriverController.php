@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Driver;
+use App\Repositories\DriverRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -13,11 +14,31 @@ use Illuminate\Http\Response;
 class DriverController extends Controller
 {
     /**
+     * @var DriverRepository
+     */
+    private DriverRepository $repo;
+
+    /**
+     * @param DriverRepository $repo
+     */
+    public function __construct(DriverRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
+    /**
+     * @param Request $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(Driver::all(), Response::HTTP_OK);
+        $filters = $request->only(['name', 'phone', 'status']);
+        $perPage = (int) $request->query('itemsPerPage', 10);
+        $page    = (int) $request->query('page', 1);
+
+        $data = $this->repo->getAllByFilter($filters, $perPage, $page);
+
+        return response()->json($data, JsonResponse::HTTP_OK);
     }
 
     /**

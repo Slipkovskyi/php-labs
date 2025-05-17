@@ -39,13 +39,16 @@ class RouteController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
     #[SymfonyRoute('/', name: 'get_routes', methods: ['GET'])]
-    public function getRoutes(): JsonResponse
+    public function getRoutes(Request $request): JsonResponse
     {
-        $routes = $this->routeRepository->findAll();
-        $data = array_map(fn(Route $route) => $route->jsonSerialize(), $routes);
+        $requestData = $request->query->all();
+        $itemsPerPage = isset($requestData['itemsPerPage']) ? (int)$requestData['itemsPerPage'] : 10;
+        $page = isset($requestData['page']) ? (int)$requestData['page'] : 1;
+        $data = $this->routeRepository->getAllByFilter($requestData, $itemsPerPage, $page);
 
         return new JsonResponse($data, Response::HTTP_OK);
     }

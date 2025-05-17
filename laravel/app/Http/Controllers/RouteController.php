@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Route;
+use App\Repositories\RouteRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -13,11 +14,31 @@ use Illuminate\Http\Response;
 class RouteController extends Controller
 {
     /**
+     * @var RouteRepository
+     */
+    private RouteRepository $repo;
+
+    /**
+     * @param RouteRepository $repo
+     */
+    public function __construct(RouteRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
+    /**
+     * @param Request $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(Route::all(), Response::HTTP_OK);
+        $filters = $request->only(['start_point', 'end_point']);
+        $perPage = (int) $request->query('itemsPerPage', 10);
+        $page    = (int) $request->query('page', 1);
+
+        $data = $this->repo->getAllByFilter($filters, $perPage, $page);
+
+        return response()->json($data, JsonResponse::HTTP_OK);
     }
 
     /**

@@ -63,13 +63,16 @@ class OrderController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
     #[Route('/', name: 'get_orders', methods: ['GET'])]
-    public function getOrders(): JsonResponse
+    public function getOrders(Request $request): JsonResponse
     {
-        $orders = $this->orderRepository->findAll();
-        $data = array_map(fn(Order $order) => $order->jsonSerialize(), $orders);
+        $requestData = $request->query->all();
+        $itemsPerPage = isset($requestData['itemsPerPage']) ? (int)$requestData['itemsPerPage'] : 10;
+        $page = isset($requestData['page']) ? (int)$requestData['page'] : 1;
+        $data = $this->orderRepository->getAllByFilter($requestData, $itemsPerPage, $page);
 
         return new JsonResponse($data, Response::HTTP_OK);
     }

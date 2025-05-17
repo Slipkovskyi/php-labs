@@ -3,41 +3,63 @@
 namespace App\Repository;
 
 use App\Entity\Car;
+use App\PaginationService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @extends ServiceEntityRepository<Car>
  */
 class CarRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    /**
+     * @var PaginationService
+     */
+    private PaginationService $paginationService;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param PaginationService $paginationService
+     */
+    public function __construct(
+        ManagerRegistry $registry,
+        PaginationService $paginationService
+    ) {
         parent::__construct($registry, Car::class);
+        $this->paginationService = $paginationService;
     }
 
-    //    /**
-    //     * @return Car[] Returns an array of Car objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @param array $data
+     * @param int $itemsPerPage
+     * @param int $page
+     * @return array
+     */
+    #[ArrayShape([
+        'cars' => "array",
+        'totalPageCount' => "float",
+        'totalItems' => "int"
+    ])]
+    public function getAllByFilter(array $data, int $itemsPerPage, int $page): array
+    {
+        $queryBuilder = $this->createQueryBuilder('car');
 
-    //    public function findOneBySomeField($value): ?Car
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if (!empty($data['model'])) {
+            $queryBuilder->andWhere('car.model LIKE :model')
+                ->setParameter('model', '%' . $data['model'] . '%');
+        }
+
+        if (!empty($data['licensePlate'])) {
+            $queryBuilder->andWhere('car.licensePlate LIKE :licensePlate')
+                ->setParameter('licensePlate', '%' . $data['licensePlate'] . '%');
+        }
+
+        if (!empty($data['driverId'])) {
+            $queryBuilder->andWhere('car.driver = :driverId')
+                ->setParameter('driverId', $data['driverId']);
+        }
+
+        return $this->paginationService->paginate($queryBuilder, $itemsPerPage, $page);
+    }
 }

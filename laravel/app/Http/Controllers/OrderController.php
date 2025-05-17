@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -13,11 +14,31 @@ use Illuminate\Http\Response;
 class OrderController extends Controller
 {
     /**
+     * @var OrderRepository
+     */
+    private OrderRepository $repo;
+
+    /**
+     * @param OrderRepository $repo
+     */
+    public function __construct(OrderRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
+    /**
+     * @param Request $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return response()->json(Order::all(), Response::HTTP_OK);
+        $filters = $request->only(['client_id', 'driver_id', 'route_id', 'status']);
+        $perPage = (int) $request->query('itemsPerPage', 10);
+        $page    = (int) $request->query('page', 1);
+
+        $data = $this->repo->getAllByFilter($filters, $perPage, $page);
+
+        return response()->json($data, JsonResponse::HTTP_OK);
     }
 
     /**

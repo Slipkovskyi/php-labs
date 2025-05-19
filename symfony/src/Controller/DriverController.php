@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  *
@@ -42,6 +43,7 @@ class DriverController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[Route('/', name: 'get_drivers', methods: ['GET'])]
     public function getDrivers(Request $request): JsonResponse
     {
@@ -57,6 +59,7 @@ class DriverController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[Route('/', name: 'create_driver', methods: ['POST'])]
     public function createDriver(Request $request): JsonResponse
     {
@@ -77,6 +80,7 @@ class DriverController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[Route('/{id}', name: 'get_driver', methods: ['GET'])]
     public function getDriver(int $id): JsonResponse
     {
@@ -93,6 +97,7 @@ class DriverController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[Route('/{id}', name: 'update_driver', methods: ['PATCH'])]
     public function updateDriver(Request $request, int $id): JsonResponse
     {
@@ -122,6 +127,7 @@ class DriverController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/{id}', name: 'delete_driver', methods: ['DELETE'])]
     public function deleteDriver(int $id): JsonResponse
     {

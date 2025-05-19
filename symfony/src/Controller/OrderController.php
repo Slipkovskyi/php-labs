@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  *
@@ -66,6 +67,7 @@ class OrderController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[Route('/', name: 'get_orders', methods: ['GET'])]
     public function getOrders(Request $request): JsonResponse
     {
@@ -81,6 +83,7 @@ class OrderController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[Route('/', name: 'create_order', methods: ['POST'])]
     public function createOrder(Request $request): JsonResponse
     {
@@ -113,6 +116,7 @@ class OrderController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[Route('/{id}', name: 'get_order', methods: ['GET'])]
     public function getOrder(int $id): JsonResponse
     {
@@ -130,6 +134,7 @@ class OrderController extends AbstractController
      * @return JsonResponse
      * @throws \DateMalformedStringException
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[Route('/{id}', name: 'update_order', methods: ['PATCH'])]
     public function updateOrder(Request $request, int $id): JsonResponse
     {
@@ -182,6 +187,7 @@ class OrderController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/{id}', name: 'delete_order', methods: ['DELETE'])]
     public function deleteOrder(int $id): JsonResponse
     {

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route as SymfonyRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  *
@@ -42,6 +43,7 @@ class RouteController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[SymfonyRoute('/', name: 'get_routes', methods: ['GET'])]
     public function getRoutes(Request $request): JsonResponse
     {
@@ -57,6 +59,7 @@ class RouteController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[SymfonyRoute('/', name: 'create_route', methods: ['POST'])]
     public function createRoute(Request $request): JsonResponse
     {
@@ -77,6 +80,7 @@ class RouteController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[SymfonyRoute('/{id}', name: 'get_route', methods: ['GET'])]
     public function getRoute(int $id): JsonResponse
     {
@@ -93,6 +97,7 @@ class RouteController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[SymfonyRoute('/{id}', name: 'update_route', methods: ['PATCH'])]
     public function updateRoute(Request $request, int $id): JsonResponse
     {
@@ -122,6 +127,7 @@ class RouteController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_ADMIN")]
     #[SymfonyRoute('/{id}', name: 'delete_route', methods: ['DELETE'])]
     public function deleteRoute(int $id): JsonResponse
     {

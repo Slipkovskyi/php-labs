@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  *
@@ -50,6 +51,7 @@ class CarController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[Route('/', name: 'get_cars', methods: ['GET'])]
     public function getCars(Request $request): JsonResponse
     {
@@ -65,6 +67,7 @@ class CarController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[Route('/', name: 'create_car', methods: ['POST'])]
     public function createCar(Request $request): JsonResponse
     {
@@ -90,6 +93,7 @@ class CarController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[Route('/{id}', name: 'get_car', methods: ['GET'])]
     public function getCar(int $id): JsonResponse
     {
@@ -106,6 +110,7 @@ class CarController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[Route('/{id}', name: 'update_car', methods: ['PATCH'])]
     public function updateCar(Request $request, int $id): JsonResponse
     {
@@ -138,6 +143,7 @@ class CarController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/{id}', name: 'delete_car', methods: ['DELETE'])]
     public function deleteCar(int $id): JsonResponse
     {

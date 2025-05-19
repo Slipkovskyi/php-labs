@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  *
@@ -42,6 +43,7 @@ class ClientController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[Route('/', name: 'get_clients', methods: ['GET'])]
     public function getClients(Request $request): JsonResponse
     {
@@ -57,6 +59,7 @@ class ClientController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[Route('/', name: 'create_client', methods: ['POST'])]
     public function createClient(Request $request): JsonResponse
     {
@@ -77,6 +80,7 @@ class ClientController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_CLIENT")]
     #[Route('/{id}', name: 'get_client', methods: ['GET'])]
     public function getClient(int $id): JsonResponse
     {
@@ -93,6 +97,7 @@ class ClientController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_MANAGER")]
     #[Route('/{id}', name: 'update_client', methods: ['PATCH'])]
     public function updateClient(Request $request, int $id): JsonResponse
     {
@@ -122,6 +127,7 @@ class ClientController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/{id}', name: 'delete_client', methods: ['DELETE'])]
     public function deleteClient(int $id): JsonResponse
     {
